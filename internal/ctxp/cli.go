@@ -109,4 +109,3 @@ func NewCommand() *ucli.Command {
 		},
 	}
 }
-

@@ -76,4 +76,3 @@ func sliceLines(data []byte, head, tail int) []byte {
 
 	return bytes.Join(out, nil)
 }
-
