@@ -32,8 +32,8 @@ func countLines(data []byte) int {
 	return n
 }
 
-// splitLines splits into logical lines, trimming a trailing empty chunk
-// when the file ends with a newline, so the count matches countLines.
+// splitLines splits data into logical lines, trimming the last empty chunk
+// when the file ends with a newline.
 func splitLines(data []byte) [][]byte {
 	if len(data) == 0 {
 		return nil
@@ -42,17 +42,15 @@ func splitLines(data []byte) [][]byte {
 	if len(lines) == 0 {
 		return lines
 	}
-	// If the last chunk is empty (which happens when the file ends with "\n"),
-	// drop it so that len(lines) == countLines(data).
 	if len(lines[len(lines)-1]) == 0 {
 		lines = lines[:len(lines)-1]
 	}
 	return lines
 }
 
-// sliceLines returns a view of data restricted by head/tail settings.
-// head or tail of 0 means "no restriction from that side".
-// If head+tail >= total number of lines, the full file is returned.
+// sliceLines returns data restricted by head/tail settings.
+// Adds an explicit "... (N rows skipped)\n" line when both are used
+// and the slice omits middle rows.
 func sliceLines(data []byte, head, tail int) []byte {
 	if head <= 0 && tail <= 0 {
 		return data
@@ -64,7 +62,7 @@ func sliceLines(data []byte, head, tail int) []byte {
 		return data
 	}
 
-	// If head or tail alone reaches/exceeds total, or the sum does, keep full file.
+	// If head or tail alone covers file, or together cover it, return full.
 	if head >= total || tail >= total || (head > 0 && tail > 0 && head+tail >= total) {
 		return data
 	}
@@ -73,10 +71,16 @@ func sliceLines(data []byte, head, tail int) []byte {
 
 	switch {
 	case head > 0 && tail > 0:
+		// Both specified; include an explanatory ellipsis line.
+		skipped := total - head - tail
+
 		out = append(out, lines[:head]...)
+		out = append(out, []byte("... ("+strconv.Itoa(skipped)+" rows skipped)\n"))
 		out = append(out, lines[total-tail:]...)
+
 	case head > 0:
 		out = lines[:head]
+
 	case tail > 0:
 		out = lines[total-tail:]
 	}
@@ -84,7 +88,7 @@ func sliceLines(data []byte, head, tail int) []byte {
 	return bytes.Join(out, nil)
 }
 
-// Run prints, for each file:
+// Run prints for each file:
 //
 //   <filename> (<row_count> rows)
 //   ---
@@ -106,10 +110,7 @@ func (r Runner) Run(files []string, out io.Writer) error {
 			return fmt.Errorf("read %q: %w", path, err)
 		}
 
-		// Real row count from the full file (what you asked for).
 		totalRows := countLines(data)
-
-		// Apply head/tail slicing for the printed view.
 		view := sliceLines(data, r.Head, r.Tail)
 
 		prefix := r.PrefixDelimiter
@@ -119,11 +120,9 @@ func (r Runner) Run(files []string, out io.Writer) error {
 		if _, err := out.Write([]byte(prefix)); err != nil {
 			return fmt.Errorf("write prefix: %w", err)
 		}
-
 		if _, err := out.Write(view); err != nil {
 			return fmt.Errorf("write data: %w", err)
 		}
-
 		if _, err := out.Write([]byte(r.PostfixDelimiter)); err != nil {
 			return fmt.Errorf("write postfix: %w", err)
 		}
