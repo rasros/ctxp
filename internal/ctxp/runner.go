@@ -27,7 +27,7 @@ func (r Runner) Run(files []string, out io.Writer) error {
 		r.PrefixDelimiter = "<filename> (<row_count> rows)\n---\n```\n"
 	}
 	if r.PostfixDelimiter == "" {
-		r.PostfixDelimiter = "```\n"
+		r.PostfixDelimiter = "```\n\n"
 	}
 
 	for _, path := range files {
