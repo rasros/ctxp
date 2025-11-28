@@ -87,19 +87,6 @@ func NewCommand() *ucli.Command {
 		Name:  "ctxp",
 		Usage: "print files with headers, delimiters, and optional head/tail slicing",
 
-		// Small, focused help for `ctxp --help`.
-		CustomRootCommandHelpTemplate: `USAGE:
-  ctxp [flags] FILE...
-
-FLAGS:
-  --head, -h N              print first N lines (0 = no limit)
-  --tail, -t N              print last N lines (0 = no limit)
-  -n N                      print first and last N lines (0 = no limit)
-  --prefix-delimiter VALUE  string printed before file contents; placeholders: <filename>, <row_count>
-  --postfix-delimiter VALUE string printed after file contents
-  --help                    show this help
-`,
-
 		Flags: []ucli.Flag{
 			&ucli.IntFlag{
 				Name:        "head",
