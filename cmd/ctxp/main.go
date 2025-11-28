@@ -5,7 +5,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/rasros/ctxp/internal/ctxp"
+	"github.com/rasros/ctxp/ctxp"
 )
 
 func main() {
@@ -16,3 +16,4 @@ func main() {
 		log.Fatal(err)
 	}
 }
+

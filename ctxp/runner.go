@@ -15,13 +15,7 @@ type Runner struct {
 	PostfixDelimiter string
 }
 
-// Run prints for each file:
-//
-//	<filename> (<row_count> rows)
-//	---
-//	```
-//	<possibly-sliced file contents>
-//	```
+// Run prints file contents with optional slicing and delimiters.
 func (r Runner) Run(files []string, out io.Writer) error {
 	if r.PrefixDelimiter == "" {
 		r.PrefixDelimiter = "<filename> (<row_count> rows)\n---\n```\n"
@@ -56,3 +50,4 @@ func (r Runner) Run(files []string, out io.Writer) error {
 
 	return nil
 }
+

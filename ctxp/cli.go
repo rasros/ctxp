@@ -18,7 +18,6 @@ func NormalizeArgs(args []string) []string {
 	out := make([]string, 0, len(args)+4)
 	for _, a := range args {
 		if len(a) > 2 && a[0] == '-' && (a[1] == 'n' || a[1] == 't') {
-			// Check that the rest is all digits.
 			digits := a[2:]
 			isDigits := true
 			for _, ch := range digits {
@@ -28,7 +27,6 @@ func NormalizeArgs(args []string) []string {
 				}
 			}
 			if isDigits {
-				// Split "-n2" → "-n", "2"
 				out = append(out, a[:2], digits)
 				continue
 			}
@@ -51,7 +49,6 @@ func NewCommand() *ucli.Command {
 		Usage: "print files with headers, delimiters, and optional head/tail slicing",
 
 		Flags: []ucli.Flag{
-			// long + short (-n / -n2)
 			&ucli.IntFlag{
 				Name:        "head",
 				Usage:       "print first N lines (0 = no limit)",
@@ -64,7 +61,6 @@ func NewCommand() *ucli.Command {
 				Hidden:      true,
 			},
 
-			// long + short (-t / -t2)
 			&ucli.IntFlag{
 				Name:        "tail",
 				Usage:       "print last N lines (0 = no limit)",
@@ -109,3 +105,4 @@ func NewCommand() *ucli.Command {
 		},
 	}
 }
+
