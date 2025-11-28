@@ -10,6 +10,9 @@ import (
 	ucli "github.com/urfave/cli/v3"
 )
 
+// Version is the application version. It can be overridden at build time via ldflags.
+var Version = "dev"
+
 // NormalizeArgs rewrites "-n2" / "-t10" / "-h5" into ["-n","2"] / ["-t","10"] / ["-h","5"]
 // so that urfave/cli/v3 parses them as int flags.
 func NormalizeArgs(args []string) []string {
@@ -84,8 +87,9 @@ func NewCommand() *ucli.Command {
 	}
 
 	return &ucli.Command{
-		Name:  "ctxp",
-		Usage: "print files with headers, delimiters, and optional head/tail slicing",
+		Name:    "ctxp",
+		Usage:   "print files with headers, delimiters, and optional head/tail slicing",
+		Version: Version,
 
 		Flags: []ucli.Flag{
 			&ucli.IntFlag{
