@@ -5,12 +5,12 @@ import (
 	"log"
 	"os"
 
-	"github.com/rasros/ctxp/ctxp"
+	"github.com/rasros/lx/lx"
 )
 
 func main() {
-	app := ctxp.NewCommand()
-	args := ctxp.NormalizeArgs(os.Args)
+	app := lx.NewCommand()
+	args := lx.NormalizeArgs(os.Args)
 
 	if err := app.Run(context.Background(), args); err != nil {
 		log.Fatal(err)

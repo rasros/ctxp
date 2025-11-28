@@ -1,4 +1,4 @@
-module github.com/rasros/ctxp
+module github.com/rasros/lx
 
 go 1.25.4
 

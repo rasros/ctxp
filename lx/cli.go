@@ -1,4 +1,4 @@
-package ctxp
+package lx
 
 import (
 	"bufio"
@@ -70,7 +70,7 @@ func readFilenamesFromStdin() ([]string, error) {
 	return paths, nil
 }
 
-// NewCommand builds the urfave/cli command for ctxp.
+// NewCommand builds the urfave/cli command for lx.
 func NewCommand() *ucli.Command {
 	var head int
 	var tail int
@@ -87,7 +87,7 @@ func NewCommand() *ucli.Command {
 	}
 
 	return &ucli.Command{
-		Name:    "ctxp",
+		Name:    "lx",
 		Usage:   "print files with headers, delimiters, and optional head/tail slicing",
 		Version: Version,
 
@@ -132,14 +132,14 @@ func NewCommand() *ucli.Command {
 			// Add filenames from piped stdin (one per line), if any.
 			stdinFiles, err := readFilenamesFromStdin()
 			if err != nil {
-				return fmt.Errorf("ctxp: read stdin: %w", err)
+				return fmt.Errorf("lx: read stdin: %w", err)
 			}
 			if len(stdinFiles) > 0 {
 				files = append(files, stdinFiles...)
 			}
 
 			if len(files) == 0 {
-				return fmt.Errorf("ctxp: provide one or more file paths via args or stdin")
+				return fmt.Errorf("lx: provide one or more file paths via args or stdin")
 			}
 
 			// Derive effective head/tail with override rules:
@@ -164,7 +164,7 @@ func NewCommand() *ucli.Command {
 			}
 
 			if err := r.Run(files, os.Stdout); err != nil {
-				return fmt.Errorf("ctxp: %w", err)
+				return fmt.Errorf("lx: %w", err)
 			}
 			return nil
 		},

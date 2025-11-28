@@ -1,4 +1,4 @@
-package ctxp
+package lx
 
 import (
 	"os"
@@ -14,43 +14,43 @@ func TestNormalizeArgs(t *testing.T) {
 	}{
 		{
 			name: "n flag short",
-			in:   []string{"ctxp", "-n2", "file"},
-			want: []string{"ctxp", "-n", "2", "file"},
+			in:   []string{"lx", "-n2", "file"},
+			want: []string{"lx", "-n", "2", "file"},
 		},
 		{
 			name: "t flag short",
-			in:   []string{"ctxp", "-t10"},
-			want: []string{"ctxp", "-t", "10"},
+			in:   []string{"lx", "-t10"},
+			want: []string{"lx", "-t", "10"},
 		},
 		{
 			name: "h flag short",
-			in:   []string{"ctxp", "-h5"},
-			want: []string{"ctxp", "-h", "5"},
+			in:   []string{"lx", "-h5"},
+			want: []string{"lx", "-h", "5"},
 		},
 		{
 			name: "mixed",
-			in:   []string{"ctxp", "-n2", "-t3", "file"},
-			want: []string{"ctxp", "-n", "2", "-t", "3", "file"},
+			in:   []string{"lx", "-n2", "-t3", "file"},
+			want: []string{"lx", "-n", "2", "-t", "3", "file"},
 		},
 		{
 			name: "non digit suffix",
-			in:   []string{"ctxp", "-nfoo"},
-			want: []string{"ctxp", "-nfoo"},
+			in:   []string{"lx", "-nfoo"},
+			want: []string{"lx", "-nfoo"},
 		},
 		{
 			name: "looks like n but not digits",
-			in:   []string{"ctxp", "-notflag"},
-			want: []string{"ctxp", "-notflag"},
+			in:   []string{"lx", "-notflag"},
+			want: []string{"lx", "-notflag"},
 		},
 		{
 			name: "negative",
-			in:   []string{"ctxp", "-h-5"},
-			want: []string{"ctxp", "-h-5"},
+			in:   []string{"lx", "-h-5"},
+			want: []string{"lx", "-h-5"},
 		},
 		{
 			name: "other flags",
-			in:   []string{"ctxp", "-x2"},
-			want: []string{"ctxp", "-x2"},
+			in:   []string{"lx", "-x2"},
+			want: []string{"lx", "-x2"},
 		},
 	}
 
