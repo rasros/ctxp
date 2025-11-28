@@ -1,8 +1,8 @@
-# Makefile for ctxp
+# Makefile for lx
 
 GO           ?= go
-BINARY_NAME  ?= ctxp
-CMD_DIR      := ./cmd/ctxp
+BINARY_NAME  ?= lx
+CMD_DIR      := ./cmd/lx
 BIN_DIR      := ./bin
 
 .PHONY: all build install fmt test run clean
