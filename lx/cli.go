@@ -1,11 +1,9 @@
 package lx
 
 import (
-	"bufio"
 	"context"
 	"fmt"
 	"os"
-	"strings"
 
 	ucli "github.com/urfave/cli/v3"
 )
@@ -13,71 +11,9 @@ import (
 // Version is the application version. It can be overridden at build time via ldflags.
 var Version = "dev"
 
-// NormalizeArgs rewrites "-n2" / "-t10" / "-h5" into ["-n","2"] / ["-t","10"] / ["-h","5"]
-// so that urfave/cli/v3 parses them as int flags.
-func NormalizeArgs(args []string) []string {
-	if len(args) == 0 {
-		return args
-	}
-
-	out := make([]string, 0, len(args)+4)
-	for _, a := range args {
-		if len(a) > 2 && a[0] == '-' && (a[1] == 'n' || a[1] == 't' || a[1] == 'h') {
-			digits := a[2:]
-			isDigits := true
-			for _, ch := range digits {
-				if ch < '0' || ch > '9' {
-					isDigits = false
-					break
-				}
-			}
-			if isDigits {
-				out = append(out, a[:2], digits)
-				continue
-			}
-		}
-		out = append(out, a)
-	}
-
-	return out
-}
-
-// readFilenamesFromStdin reads filenames (one per line) from stdin when stdin
-// is a pipe or redirection. If stdin is a TTY, it returns (nil, nil).
-func readFilenamesFromStdin() ([]string, error) {
-	info, err := os.Stdin.Stat()
-	if err != nil {
-		return nil, err
-	}
-
-	// If stdin is a character device, there is no piped input.
-	if info.Mode()&os.ModeCharDevice != 0 {
-		return nil, nil
-	}
-
-	sc := bufio.NewScanner(os.Stdin)
-	var paths []string
-	for sc.Scan() {
-		line := strings.TrimSpace(sc.Text())
-		if line == "" {
-			continue
-		}
-		paths = append(paths, line)
-	}
-	if err := sc.Err(); err != nil {
-		return nil, err
-	}
-	return paths, nil
-}
-
 // NewCommand builds the urfave/cli command for lx.
 func NewCommand() *ucli.Command {
-	var head int
-	var tail int
-	var nBoth int
-	var prefix string
-	var postfix string
-	var showLineNumbers bool
+	var opts Options
 
 	// Make --help the only help flag (freeing -h for --head).
 	ucli.HelpFlag = &ucli.BoolFlag{
@@ -97,44 +33,49 @@ func NewCommand() *ucli.Command {
 				Name:        "head",
 				Aliases:     []string{"h"},
 				Usage:       "print first N lines (0 = no limit)",
-				Destination: &head,
+				Destination: &opts.Head,
 			},
 
 			&ucli.IntFlag{
 				Name:        "tail",
 				Aliases:     []string{"t"},
 				Usage:       "print last N lines (0 = no limit)",
-				Destination: &tail,
+				Destination: &opts.Tail,
 			},
 
 			&ucli.IntFlag{
 				Name:        "n",
 				Usage:       "print first and last N lines (0 = no limit)",
-				Destination: &nBoth,
+				Destination: &opts.NBoth,
 			},
 
 			&ucli.StringFlag{
 				Name:        "prefix-delimiter",
 				Usage:       "string printed before file contents; placeholders: {filename}, {row_count}, {byte_size}, {last_modified}",
-				Destination: &prefix,
+				Destination: &opts.PrefixDelimiter,
 			},
 			&ucli.StringFlag{
 				Name:        "postfix-delimiter",
 				Usage:       "string printed after file contents",
-				Destination: &postfix,
+				Destination: &opts.PostfixDelimiter,
 			},
 
 			&ucli.BoolFlag{
 				Name:        "line-numbers",
 				Aliases:     []string{"l"},
 				Usage:       "print line numbers",
-				Destination: &showLineNumbers,
+				Destination: &opts.LineNumbers,
 			},
 		},
 
 		Action: func(ctx context.Context, cmd *ucli.Command) error {
+			// Track which flags were explicitly set to preserve override rules.
+			opts.HeadSet = cmd.IsSet("head")
+			opts.TailSet = cmd.IsSet("tail")
+			opts.NSet = cmd.IsSet("n")
+
 			// Start with filenames from CLI args.
-			files := cmd.Args().Slice()
+			opts.Files = cmd.Args().Slice()
 
 			// Add filenames from piped stdin (one per line), if any.
 			stdinFiles, err := readFilenamesFromStdin()
@@ -142,36 +83,16 @@ func NewCommand() *ucli.Command {
 				return fmt.Errorf("lx: read stdin: %w", err)
 			}
 			if len(stdinFiles) > 0 {
-				files = append(files, stdinFiles...)
+				opts.Files = append(opts.Files, stdinFiles...)
 			}
 
-			if len(files) == 0 {
+			if len(opts.Files) == 0 {
 				return fmt.Errorf("lx: provide one or more file paths via args or stdin")
 			}
 
-			// Derive effective head/tail with override rules:
-			// -n sets both head and tail, unless overridden by explicit --head/-h or --tail/-t.
-			effHead := head
-			effTail := tail
+			r := opts.Effective()
 
-			if cmd.IsSet("n") {
-				if !cmd.IsSet("head") {
-					effHead = nBoth
-				}
-				if !cmd.IsSet("tail") {
-					effTail = nBoth
-				}
-			}
-
-			r := Runner{
-				Head:             effHead,
-				Tail:             effTail,
-				PrefixDelimiter:  prefix,
-				PostfixDelimiter: postfix,
-				LineNumbers:      showLineNumbers,
-			}
-
-			if err := r.Run(files, os.Stdout); err != nil {
+			if err := r.Run(opts.Files, os.Stdout); err != nil {
 				return fmt.Errorf("lx: %w", err)
 			}
 			return nil

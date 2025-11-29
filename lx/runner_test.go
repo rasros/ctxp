@@ -17,7 +17,7 @@ func TestRunner_DefaultDelimitersAndPlaceholders(t *testing.T) {
 	}
 
 	var buf bytes.Buffer
-	r := Runner{}
+	r := NewRunner(0, 0, "", "", false)
 
 	if err := r.Run([]string{path}, &buf); err != nil {
 		t.Fatalf("Run error: %v", err)
@@ -100,11 +100,15 @@ func TestRunner_MultipleFiles(t *testing.T) {
 	dir := t.TempDir()
 	p1 := filepath.Join(dir, "f1.txt")
 	p2 := filepath.Join(dir, "f2.txt")
-	os.WriteFile(p1, []byte("x\n"), 0o644)
-	os.WriteFile(p2, []byte("y\n"), 0o644)
+	if err := os.WriteFile(p1, []byte("x\n"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(p2, []byte("y\n"), 0o644); err != nil {
+		t.Fatal(err)
+	}
 
 	var buf bytes.Buffer
-	r := Runner{}
+	r := NewRunner(0, 0, "", "", false)
 
 	if err := r.Run([]string{p1, p2}, &buf); err != nil {
 		t.Fatalf("Run error: %v", err)
@@ -121,7 +125,7 @@ func TestRunner_MultipleFiles(t *testing.T) {
 
 func TestRunner_FileNotFound(t *testing.T) {
 	var buf bytes.Buffer
-	r := Runner{}
+	r := NewRunner(0, 0, "", "", false)
 
 	err := r.Run([]string{"no_such_file.txt"}, &buf)
 	if err == nil {
