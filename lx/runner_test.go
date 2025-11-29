@@ -24,7 +24,7 @@ func TestRunner_DefaultDelimitersAndPlaceholders(t *testing.T) {
 	}
 
 	out := buf.String()
-	if !strings.Contains(out, path+" (3 rows)\n---\n```\n") {
+	if !strings.Contains(out, path+" (3 rows)\n---\n```text\n") {
 		t.Errorf("missing default prefix with placeholders, got:\n%s", out)
 	}
 	if !strings.Contains(out, content) {
