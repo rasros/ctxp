@@ -18,7 +18,7 @@ type Runner struct {
 // Run prints file contents with optional slicing and delimiters.
 func (r Runner) Run(files []string, out io.Writer) error {
 	if r.PrefixDelimiter == "" {
-		r.PrefixDelimiter = "<filename> (<row_count> rows)\n---\n```\n"
+		r.PrefixDelimiter = "{filename} ({row_count} rows)\n---\n```\n"
 	}
 	if r.PostfixDelimiter == "" {
 		r.PostfixDelimiter = "```\n\n"
@@ -34,8 +34,8 @@ func (r Runner) Run(files []string, out io.Writer) error {
 		view := sliceLines(data, r.Head, r.Tail)
 
 		prefix := r.PrefixDelimiter
-		prefix = strings.ReplaceAll(prefix, "<filename>", path)
-		prefix = strings.ReplaceAll(prefix, "<row_count>", strconv.Itoa(totalRows))
+		prefix = strings.ReplaceAll(prefix, "{filename}", path)
+		prefix = strings.ReplaceAll(prefix, "{row_count}", strconv.Itoa(totalRows))
 
 		if _, err := out.Write([]byte(prefix)); err != nil {
 			return fmt.Errorf("write prefix: %w", err)

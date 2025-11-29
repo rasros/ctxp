@@ -115,7 +115,7 @@ func NewCommand() *ucli.Command {
 
 			&ucli.StringFlag{
 				Name:        "prefix-delimiter",
-				Usage:       "string printed before file contents; placeholders: <filename>, <row_count>",
+				Usage:       "string printed before file contents; placeholders: {filename}, {row_count}",
 				Destination: &prefix,
 			},
 			&ucli.StringFlag{
