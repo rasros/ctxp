@@ -22,7 +22,7 @@ go install github.com/rasros/lx/cmd/lx@latest
 lx cmd/lx/main.go
 cmd/lx/main.go (18 rows)
 ---
-```
+` ```go
 package main
 
 import (
