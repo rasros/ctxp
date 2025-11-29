@@ -77,6 +77,7 @@ func NewCommand() *ucli.Command {
 	var nBoth int
 	var prefix string
 	var postfix string
+	var showLineNumbers bool
 
 	// Make --help the only help flag (freeing -h for --head).
 	ucli.HelpFlag = &ucli.BoolFlag{
@@ -122,6 +123,13 @@ func NewCommand() *ucli.Command {
 				Usage:       "string printed after file contents",
 				Destination: &postfix,
 			},
+
+			&ucli.BoolFlag{
+				Name:        "line-numbers",
+				Aliases:     []string{"l"},
+				Usage:       "print line numbers",
+				Destination: &showLineNumbers,
+			},
 		},
 
 		Action: func(ctx context.Context, cmd *ucli.Command) error {
@@ -160,6 +168,7 @@ func NewCommand() *ucli.Command {
 				Tail:             effTail,
 				PrefixDelimiter:  prefix,
 				PostfixDelimiter: postfix,
+				LineNumbers:      showLineNumbers,
 			}
 
 			if err := r.Run(files, os.Stdout); err != nil {
