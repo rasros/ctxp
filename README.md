@@ -16,7 +16,7 @@
 
 ## Installation
 
-```
+```bash
 go install github.com/rasros/lx/cmd/lx@latest
 ```
 
@@ -24,7 +24,7 @@ go install github.com/rasros/lx/cmd/lx@latest
 
 Example:
 
-````
+~~~bash
 > lx cmd/lx/main.go
 lx cmd/lx/main.go
 cmd/lx/main.go (18 rows)
@@ -32,7 +32,7 @@ cmd/lx/main.go (18 rows)
 ```go
 package main
 ...
-````
+~~~
 
 ```
 
