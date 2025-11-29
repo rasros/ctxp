@@ -106,7 +106,6 @@ func NewCommand() *ucli.Command {
 				Destination: &tail,
 			},
 
-			// -n applies both head and tail.
 			&ucli.IntFlag{
 				Name:        "n",
 				Usage:       "print first and last N lines (0 = no limit)",
@@ -115,7 +114,7 @@ func NewCommand() *ucli.Command {
 
 			&ucli.StringFlag{
 				Name:        "prefix-delimiter",
-				Usage:       "string printed before file contents; placeholders: {filename}, {row_count}",
+				Usage:       "string printed before file contents; placeholders: {filename}, {row_count}, {byte_size}, {last_modified}",
 				Destination: &prefix,
 			},
 			&ucli.StringFlag{
@@ -148,10 +147,10 @@ func NewCommand() *ucli.Command {
 			effTail := tail
 
 			if cmd.IsSet("n") {
-				if !cmd.IsSet("head") { // -h/--head present => override -n for head
+				if !cmd.IsSet("head") {
 					effHead = nBoth
 				}
-				if !cmd.IsSet("tail") { // -t/--tail present => override -n for tail
+				if !cmd.IsSet("tail") {
 					effTail = nBoth
 				}
 			}

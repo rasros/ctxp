@@ -45,7 +45,7 @@ func TestRunner_CustomDelimiters(t *testing.T) {
 
 	var buf bytes.Buffer
 	r := Runner{
-		PrefixDelimiter:  "BEGIN <filename> <row_count>\n",
+		PrefixDelimiter:  "BEGIN {filename} {row_count}\n",
 		PostfixDelimiter: "END\n",
 	}
 

@@ -5,12 +5,9 @@
 ## Features
 
 - Prints multiple files with markdown-style headers and fenced blocks.
-- Optional slices for inspecting output:
-  - `--head, -h` for the first N lines
-  - `--tail, -t` for the last N lines
-  - `-n` for both, inserting an ellipsis line
+- Optional slices for inspecting output
 - Reads file paths from args or stdin for flexible usage.
-- Customize prefix/postfix delimiters in shel aliases with `{filename}` and `{row_count}` placeholders.
+- Customize prefix/postfix delimiters in shell aliases with placeholders.
 
 ## Installation
 
@@ -21,10 +18,33 @@ go install github.com/rasros/lx/cmd/lx@latest
 ## Usage
 
 ```bash
-lx file.go
-lx -h 20 file.go
-lx -t 50 file.go
-lx -n 10 file.go
+> lx cmd/lx/main.go
+lx cmd/lx/main.go
+cmd/lx/main.go (18 rows)
+---
+```
+package main
+
+import (
+	"context"
+	"log"
+	"os"
+
+	"github.com/rasros/lx/lx"
+)
+
+func main() {
+	app := lx.NewCommand()
+	args := lx.NormalizeArgs(os.Args)
+
+	if err := app.Run(context.Background(), args); err != nil {
+		log.Fatal(err)
+	}
+}
+```
+
+```bash
+lx **/*.py~test_*.py
 ```
 
 From stdin:
@@ -43,4 +63,8 @@ lx main.go | wl-copy
 rg -tpy -l "def handler\(" | lx | wl-copy
 
 
-
+## Placeholders
+`{filename}`
+`{row_count}` 
+`{byte_size}`
+`{last_modified}`

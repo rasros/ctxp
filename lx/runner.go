@@ -6,6 +6,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"time"
 )
 
 type Runner struct {
@@ -25,17 +26,27 @@ func (r Runner) Run(files []string, out io.Writer) error {
 	}
 
 	for _, path := range files {
+		info, err := os.Stat(path)
+		if err != nil {
+			return fmt.Errorf("stat %q: %w", path, err)
+		}
+
 		data, err := os.ReadFile(path)
 		if err != nil {
 			return fmt.Errorf("read %q: %w", path, err)
 		}
 
 		totalRows := countLines(data)
+		byteSize := info.Size()
+		lastMod := info.ModTime().Format(time.RFC3339)
+
 		view := sliceLines(data, r.Head, r.Tail)
 
 		prefix := r.PrefixDelimiter
 		prefix = strings.ReplaceAll(prefix, "{filename}", path)
 		prefix = strings.ReplaceAll(prefix, "{row_count}", strconv.Itoa(totalRows))
+		prefix = strings.ReplaceAll(prefix, "{byte_size}", strconv.FormatInt(byteSize, 10))
+		prefix = strings.ReplaceAll(prefix, "{last_modified}", lastMod)
 
 		if _, err := out.Write([]byte(prefix)); err != nil {
 			return fmt.Errorf("write prefix: %w", err)
@@ -50,3 +61,4 @@ func (r Runner) Run(files []string, out io.Writer) error {
 
 	return nil
 }
+
