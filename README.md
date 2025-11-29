@@ -41,6 +41,7 @@ func main() {
 		log.Fatal(err)
 	}
 }
+\```
 ```
 
 ```bash
