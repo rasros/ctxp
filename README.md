@@ -6,7 +6,7 @@
 
 **`lx` formats one or more files into clean, Markdown-fenced blocks ready to paste into LLM chat windows.**
 
-`lx` makes prompt setup **repeatable**. Instead of manually letting an agent guess or manually linking by clicking each file you want in the context, you define the context you want in a single shell command. Then you can rerun it whenever you need a fresh session. It works smoothly with tools like `rg -l`, `fd`, and recursive shell globs.
+The goal is to make prompt setup **repeatable**. Instead of manually letting an agent guess context or clicking through files in a UI, you define the exact context you want in one shell command and rerun it whenever you need a fresh session. It works smoothly with tools like `rg -l`, `fd`, and recursive shell globs.
 
 This gives you a stable, controllable workflow:
 
