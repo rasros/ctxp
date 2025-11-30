@@ -11,29 +11,27 @@ log() {
 }
 
 detect_os() {
-  local uname_os
-  uname_os="$(uname -s)"
-
-  case "$uname_os" in
+  local u
+  u="$(uname -s)"
+  case "$u" in
     Linux*)  echo "linux" ;;
     Darwin*) echo "darwin" ;;
     MINGW*|MSYS*|CYGWIN*) echo "windows" ;;
     *)
-      log "Unsupported OS: $uname_os"
+      log "Unsupported OS: $u"
       exit 1
       ;;
   esac
 }
 
 detect_arch() {
-  local uname_arch
-  uname_arch="$(uname -m)"
-
-  case "$uname_arch" in
-    x86_64|amd64) echo "amd64" ;;
+  local a
+  a="$(uname -m)"
+  case "$a" in
+    x86_64|amd64)  echo "amd64" ;;
     aarch64|arm64) echo "arm64" ;;
     *)
-      log "Unsupported architecture: $uname_arch"
+      log "Unsupported architecture: $a"
       exit 1
       ;;
   esac
@@ -41,7 +39,7 @@ detect_arch() {
 
 ensure_curl() {
   if ! command -v curl >/dev/null 2>&1; then
-    log "curl is required but was not found"
+    log "curl is required but not found"
     exit 1
   fi
 }
@@ -50,12 +48,12 @@ ensure_unpack_tool() {
   local os="$1"
   if [ "$os" = "windows" ]; then
     if ! command -v unzip >/dev/null 2>&1; then
-      log "unzip is required to extract zip archives"
+      log "unzip is required to extract release archives"
       exit 1
     fi
   else
     if ! command -v tar >/dev/null 2>&1; then
-      log "tar is required to extract tar.gz archives"
+      log "tar is required to extract release archives"
       exit 1
     fi
   fi
@@ -88,12 +86,12 @@ check_path() {
 }
 
 latest_tag() {
-  # Uses GitHub API to get latest release tag, e.g. "v1.0.1"
+  # Returns e.g. "v1.1.0"
   local api="https://api.github.com/repos/${REPO}/releases/latest"
   local tag
-  tag="$(curl -fsSL "$api" | grep -m 1 '"tag_name"' | sed -E 's/.*"tag_name": *"([^"]+)".*/\1/')"
+  tag="$(curl -fsSL "$api" | grep -m1 '"tag_name"' | sed -E 's/.*"tag_name": *"([^"]+)".*/\1/')"
   if [ -z "$tag" ]; then
-    log "Failed to determine latest release tag from GitHub API"
+    log "Failed to determine latest release tag"
     exit 1
   fi
   echo "$tag"
@@ -119,11 +117,9 @@ EOF
   arch="$(detect_arch)"
   ensure_unpack_tool "$os"
 
-  tag="$(latest_tag)"        # e.g. "v1.0.1"
-  version="${tag#v}"         # e.g. "1.0.1"
+  tag="$(latest_tag)"     # e.g. "v1.1.0"
+  version="${tag#v}"      # "1.1.0"
 
-  # Archive naming must match your workflow:
-  #   lx_${VERSION}_${GOOS}_${GOARCH}.tar.gz (or .zip on windows)
   archive_base="lx_${version}_${os}_${arch}"
   if [ "$os" = "windows" ]; then
     archive_file="${archive_base}.zip"
@@ -136,18 +132,17 @@ EOF
   tmpdir="$(mktemp -d)"
   trap 'rm -rf "$tmpdir"' EXIT
 
-  tmp_archive="${tmpdir}/${archive_file}"
-  download "$url" "$tmp_archive"
+  archive_path="${tmpdir}/${archive_file}"
+  download "$url" "$archive_path"
 
   # Extract archive
   if [ "$os" = "windows" ]; then
-    (cd "$tmpdir" && unzip -q "$tmp_archive")
+    (cd "$tmpdir" && unzip -q "$archive_path")
   else
-    (cd "$tmpdir" && tar -xzf "$tmp_archive")
+    (cd "$tmpdir" && tar -xzf "$archive_path")
   fi
 
-  # Binary name inside archive must match your build step:
-  #   lx-${VERSION}-${GOOS}-${GOARCH}[.exe]
+  # Binary name inside archive
   bin_name="lx-${version}-${os}-${arch}"
   if [ "$os" = "windows" ]; then
     bin_name="${bin_name}.exe"
