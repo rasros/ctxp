@@ -55,12 +55,12 @@ func (r Runner) runFile(path string, out io.Writer) error {
 		return fmt.Errorf("read %q: %w", path, err)
 	}
 
-	totalRows := countLines(data)
+	// Compute the view and the total number of rows in one go.
+	view, totalRows := prepareView(data, r.Head, r.Tail)
+
 	byteSize := info.Size()
 	lastMod := info.ModTime().Format(time.RFC3339)
 	lang := languageFromPath(path)
-
-	view := sliceLines(data, r.Head, r.Tail)
 
 	prefix := r.buildPrefix(path, totalRows, byteSize, lastMod, lang)
 
@@ -84,6 +84,7 @@ func (r Runner) runFile(path string, out io.Writer) error {
 
 	return nil
 }
+
 
 // Run prints file contents with optional slicing and delimiters.
 func (r Runner) Run(files []string, out io.Writer) error {

@@ -1,7 +1,6 @@
 package lx
 
 import (
-	"bufio"
 	"bytes"
 	"strconv"
 )
@@ -13,12 +12,59 @@ func countLines(data []byte) int {
 		return 0
 	}
 
-	sc := bufio.NewScanner(bytes.NewReader(data))
-	n := 0
-	for sc.Scan() {
+	// Count '\n' characters.
+	n := bytes.Count(data, []byte("\n"))
+	// If the last byte is not '\n', there's one more logical line.
+	if data[len(data)-1] != '\n' {
 		n++
 	}
 	return n
+}
+
+// prepareView computes the sliced view of data based on head/tail and returns
+// both the view and the total number of logical rows in the original data.
+func prepareView(data []byte, head, tail int) ([]byte, int) {
+	if len(data) == 0 {
+		return data, 0
+	}
+
+	lines := splitLines(data)
+	total := len(lines)
+
+	// No slicing: full file.
+	if head <= 0 && tail <= 0 {
+		return data, total
+	}
+
+	// If there are no logical lines (defensive), keep original.
+	if total == 0 {
+		return data, total
+	}
+
+	// If head or tail alone covers file, or together cover it, return full.
+	if head >= total || tail >= total || (head > 0 && tail > 0 && head+tail >= total) {
+		return data, total
+	}
+
+	var out [][]byte
+
+	switch {
+	case head > 0 && tail > 0:
+		// Both specified; include an explanatory ellipsis line.
+		skipped := total - head - tail
+
+		out = append(out, lines[:head]...)
+		out = append(out, []byte("... ("+strconv.Itoa(skipped)+" rows skipped)\n"))
+		out = append(out, lines[total-tail:]...)
+
+	case head > 0:
+		out = lines[:head]
+
+	case tail > 0:
+		out = lines[total-tail:]
+	}
+
+	return bytes.Join(out, nil), total
 }
 
 // splitLines splits data into logical lines, trimming the last empty chunk
@@ -41,40 +87,8 @@ func splitLines(data []byte) [][]byte {
 // Adds an explicit "... (N rows skipped)\n" line when both are used
 // and the slice omits middle rows.
 func sliceLines(data []byte, head, tail int) []byte {
-	if head <= 0 && tail <= 0 {
-		return data
-	}
-
-	lines := splitLines(data)
-	total := len(lines)
-	if total == 0 {
-		return data
-	}
-
-	// If head or tail alone covers file, or together cover it, return full.
-	if head >= total || tail >= total || (head > 0 && tail > 0 && head+tail >= total) {
-		return data
-	}
-
-	var out [][]byte
-
-	switch {
-	case head > 0 && tail > 0:
-		// Both specified; include an explanatory ellipsis line.
-		skipped := total - head - tail
-
-		out = append(out, lines[:head]...)
-		out = append(out, []byte("... ("+strconv.Itoa(skipped)+" rows skipped)\n"))
-		out = append(out, lines[total-tail:]...)
-
-	case head > 0:
-		out = lines[:head]
-
-	case tail > 0:
-		out = lines[total-tail:]
-	}
-
-	return bytes.Join(out, nil)
+	view, _ := prepareView(data, head, tail)
+	return view
 }
 
 // addLineNumbers prefixes each logical line with "N: ", where N is the
