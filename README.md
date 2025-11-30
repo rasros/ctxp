@@ -49,10 +49,22 @@ package main
 ```
 ~~~
 
-Copy directly to clipboard (Wayland):
-
+Copy directly to clipboard:
 ```bash
-lx cmd/lx/main.go | wl-copy
+# Wayland (Ubuntu, Debian)
+lx file.py | wl-copy
+
+# X11
+lx file.py | xclip -selection clipboard
+# or
+lx file.py | xsel --clipboard --input
+
+# macOS
+lx file.py | pbcopy
+
+# MSYS2
+
+lx file.py | clip
 ```
 
 ---
@@ -94,12 +106,12 @@ lx **/*.py~*_test.py
 
 # bash glob
 shopt -s globstar extglob
-lx **/*.py~*_test.py
+lx **/!(*_test).py
 
 # fish glob
 lx **/*.py ^**/*_test.py
 
-# msys2 glob
+# MSYS2 glob
 shopt -s globstar extglob
 lx **/!(*_test).py
 ```
