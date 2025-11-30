@@ -45,7 +45,7 @@ func NewCommand() *ucli.Command {
 
 			&ucli.IntFlag{
 				Name:        "n",
-				Usage:       "print first and last N lines (0 = no limit)",
+				Usage:       "print N lines split between head and tail (0 = no limit)",
 				Destination: &opts.NBoth,
 			},
 
@@ -99,4 +99,3 @@ func NewCommand() *ucli.Command {
 		},
 	}
 }
-

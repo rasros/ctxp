@@ -15,4 +15,3 @@ func TestNewCommand_Basic(t *testing.T) {
 		t.Fatalf("NewCommand().Name = %q, want %q", cmd.Name, "lx")
 	}
 }
-

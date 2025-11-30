@@ -20,7 +20,7 @@ func TestOptionsEffective_NoN_UsesHeadTail(t *testing.T) {
 	}
 }
 
-func TestOptionsEffective_NOnly_SetsBothHeadAndTail(t *testing.T) {
+func TestOptionsEffective_NOnly_SplitsTotalNBetweenHeadAndTail(t *testing.T) {
 	opts := Options{
 		Head:  0,
 		Tail:  0,
@@ -33,8 +33,8 @@ func TestOptionsEffective_NOnly_SetsBothHeadAndTail(t *testing.T) {
 
 	r := opts.Effective()
 
-	if r.Head != 5 || r.Tail != 5 {
-		t.Fatalf("Effective() Head/Tail = (%d,%d), want (5,5)", r.Head, r.Tail)
+	if r.Head != 3 || r.Tail != 2 {
+		t.Fatalf("Effective() Head/Tail = (%d,%d), want (3,2)", r.Head, r.Tail)
 	}
 }
 
@@ -51,8 +51,9 @@ func TestOptionsEffective_NWithHeadOverride(t *testing.T) {
 
 	r := opts.Effective()
 
-	if r.Head != 2 || r.Tail != 5 {
-		t.Fatalf("Effective() Head/Tail = (%d,%d), want (2,5)", r.Head, r.Tail)
+	// Total N = 5, head explicitly 2 => tail should be 3.
+	if r.Head != 2 || r.Tail != 3 {
+		t.Fatalf("Effective() Head/Tail = (%d,%d), want (2,3)", r.Head, r.Tail)
 	}
 }
 
@@ -69,8 +70,9 @@ func TestOptionsEffective_NWithTailOverride(t *testing.T) {
 
 	r := opts.Effective()
 
-	if r.Head != 5 || r.Tail != 7 {
-		t.Fatalf("Effective() Head/Tail = (%d,%d), want (5,7)", r.Head, r.Tail)
+	// Total N = 5, tail explicitly 7 => clamped to 5, head = 0.
+	if r.Head != 0 || r.Tail != 5 {
+		t.Fatalf("Effective() Head/Tail = (%d,%d), want (0,5)", r.Head, r.Tail)
 	}
 }
 
@@ -87,6 +89,7 @@ func TestOptionsEffective_NWithBothOverrides(t *testing.T) {
 
 	r := opts.Effective()
 
+	// Both head and tail explicitly set; -n should not override them.
 	if r.Head != 2 || r.Tail != 7 {
 		t.Fatalf("Effective() Head/Tail = (%d,%d), want (2,7)", r.Head, r.Tail)
 	}
@@ -119,4 +122,3 @@ func TestOptionsEffective_PrefixPostfixAndLineNumbers(t *testing.T) {
 		t.Fatalf("Effective() LineNumbers = false, want true")
 	}
 }
-
