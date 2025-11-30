@@ -49,21 +49,26 @@ package main
 ```
 ~~~
 
-Copy directly to clipboard:
+You can put it directly in your clipboard by piping it to a copy tool:
 ```bash
 # Wayland (Ubuntu, Debian)
 lx file.py | wl-copy
+```
 
+```bash
 # X11
 lx file.py | xclip -selection clipboard
 # or
 lx file.py | xsel --clipboard --input
+```
 
+```bash
 # macOS
 lx file.py | pbcopy
+```
 
+```bash
 # MSYS2
-
 lx file.py | clip
 ```
 
