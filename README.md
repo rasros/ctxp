@@ -18,9 +18,15 @@ This gives you a stable, controllable workflow:
 
 ## Installation
 
+Via go install:
 ```bash
 go install github.com/rasros/lx/cmd/lx@latest
 ````
+
+Or via curl into `$HOME/.local/bin/lx`:
+```
+curl -fsSL https://raw.githubusercontent.com/rasros/lx/main/install.sh | bash
+```
 
 ---
 
