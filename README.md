@@ -6,7 +6,9 @@
 
 `lx` is a small CLI for turning one or more files into clean, Markdown-fenced blocks that are easy to paste into LLM chat windows.
 
-The purpose is not just formatting — it's workflow control. `lx` lets you **capture prompt context in your shell**, so you can recreate it instantly. Instead of repairing a misaligned AI conversation, you restart with a refined prompt in seconds. Your context becomes a repeatable artifact, not a manual copy-paste ritual.
+Its purpose is to make prompt setup *repeatable*. Instead of manually selecting, trimming, and pasting code into an AI chat window, you define the context you want in a single shell command. Re-run that command and you get the exact same prompt every time. It's designed to work with popular tools like `rg -l` and `fd` and shell glob.
+
+This creates a more stable workflow. You keep control of the context, not the chat UI. If a conversation drifts or misinterprets something, you restart with the same context immediately.  
 
 ---
 
@@ -28,25 +30,24 @@ lx cmd/lx/main.go
 
 Example output (trimmed):
 
-````text
+~~~text
 cmd/lx/main.go (18 rows)
 ---
 ```go
 package main
 ... (rest omitted)
-````
-
-````
+```
+~~~
 
 Copy directly to clipboard (Wayland):
 
 ```bash
 lx cmd/lx/main.go | wl-copy
-````
+```
 
 Use cases:
 
-* Create a “context recipe” you can re-run for any new chat session.
+* Create a "context recipe" you can re-run for any new chat session.
 * Quickly modify the recipe (more files, different slicing) and re-paste into a clean conversation.
 * Treat prompts as reproducible commands instead of fragile in-chat constructions.
 
@@ -72,7 +73,7 @@ Collect files with ripgrep, then format:
 rg "def save" -l **/database/*.py | lx
 ```
 
-This produces a stable, shell-based definition of “what I want the model to see,” easily re-run anytime.
+This produces a stable, shell-based definition of "what I want the model to see" easily re-run anytime.
 
 ---
 
