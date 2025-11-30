@@ -26,25 +26,39 @@ jobs:
           VERSION="${GITHUB_REF_NAME#v}"
           echo "VERSION=$VERSION" >> "$GITHUB_ENV"
 
-      - name: Build multi-platform binaries
+      - name: Build multi-platform archives
         run: |
+          set -euo pipefail
+
           mkdir -p dist
 
           ldflags="-X 'github.com/rasros/lx/lx.Version=${VERSION}'"
 
-          # linux / darwin / windows, amd64 + arm64
           for GOOS in linux darwin windows; do
             for GOARCH in amd64 arm64; do
-              bin="lx-${GOOS}-${GOARCH}"
+              bin="lx"
+              ext=""
               if [ "$GOOS" = "windows" ]; then
-                bin="${bin}.exe"
+                ext=".exe"
               fi
 
-              echo "Building $bin ..."
+              out_bin="lx-${VERSION}-${GOOS}-${GOARCH}${ext}"
+
+              echo "Building $out_bin ..."
               GOOS=$GOOS GOARCH=$GOARCH go build \
                 -ldflags="$ldflags" \
-                -o "dist/${bin}" \
+                -o "$out_bin" \
                 ./cmd/lx
+
+              archive="lx_${VERSION}_${GOOS}_${GOARCH}"
+
+              if [ "$GOOS" = "windows" ]; then
+                zip "dist/${archive}.zip" "$out_bin" README.md LICENSE
+              else
+                tar -czf "dist/${archive}.tar.gz" "$out_bin" README.md LICENSE
+              fi
+
+              rm "$out_bin"
             done
           done
 
