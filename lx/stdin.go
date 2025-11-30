@@ -33,4 +33,3 @@ func readFilenamesFromStdin() ([]string, error) {
 	}
 	return paths, nil
 }
-

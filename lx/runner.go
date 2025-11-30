@@ -85,7 +85,6 @@ func (r Runner) runFile(path string, out io.Writer) error {
 	return nil
 }
 
-
 // Run prints file contents with optional slicing and delimiters.
 func (r Runner) Run(files []string, out io.Writer) error {
 	for _, path := range files {
@@ -95,4 +94,3 @@ func (r Runner) Run(files []string, out io.Writer) error {
 	}
 	return nil
 }
-
