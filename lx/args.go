@@ -28,4 +28,3 @@ func NormalizeArgs(args []string) []string {
 
 	return out
 }
-

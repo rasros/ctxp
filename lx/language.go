@@ -54,4 +54,3 @@ func languageFromPath(path string) string {
 	ext := strings.ToLower(filepath.Ext(path))
 	return extToLang[ext]
 }
-

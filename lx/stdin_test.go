@@ -36,4 +36,3 @@ func TestReadFilenamesFromStdin_Piped(t *testing.T) {
 		t.Errorf("readFilenamesFromStdin = %v, want %v", got, want)
 	}
 }
-

@@ -183,4 +183,3 @@ func TestLanguageFromPath(t *testing.T) {
 		}
 	}
 }
-

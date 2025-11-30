@@ -61,4 +61,3 @@ func TestNormalizeArgs(t *testing.T) {
 		}
 	}
 }
-
