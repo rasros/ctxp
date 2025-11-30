@@ -1,10 +1,10 @@
 # lx
 
-**`lx` is a small CLI for turning one or more files into clean, Markdown-fenced blocks that are easy to paste into LLM chat windows.**
-
 [![Go Reference](https://pkg.go.dev/badge/github.com/rasros/lx.svg)](https://pkg.go.dev/github.com/rasros/lx)
 [![Go Report Card](https://goreportcard.com/badge/github.com/rasros/lx)](https://goreportcard.com/report/github.com/rasros/lx)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
+**`lx` formats one or more files into clean, Markdown-fenced blocks ready to paste into LLM chat windows.**
 
 `lx` makes prompt setup **repeatable**. Instead of manually letting an agent guess or manually linking by clicking each file you want in the context, you define the context you want in a single shell command. Then you can rerun it whenever you need a fresh session. It works smoothly with tools like `rg -l`, `fd`, and recursive shell globs.
 

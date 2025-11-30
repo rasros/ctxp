@@ -167,4 +167,3 @@ func addLineNumbers(data []byte, totalRows, head, tail int) []byte {
 	// Fallback: sequential numbering (should not normally reach here).
 	return numberLines(lines, 1)
 }
-
