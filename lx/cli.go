@@ -75,7 +75,7 @@ func NewCommand() *ucli.Command {
 			opts.NSet = cmd.IsSet("n")
 
 			// Start with filenames from CLI args.
-			opts.Files = cmd.Args().Slice()
+			files := cmd.Args().Slice()
 
 			// Add filenames from piped stdin (one per line), if any.
 			stdinFiles, err := readFilenamesFromStdin()
@@ -83,16 +83,16 @@ func NewCommand() *ucli.Command {
 				return fmt.Errorf("lx: read stdin: %w", err)
 			}
 			if len(stdinFiles) > 0 {
-				opts.Files = append(opts.Files, stdinFiles...)
+				files = append(files, stdinFiles...)
 			}
 
-			if len(opts.Files) == 0 {
+			if len(files) == 0 {
 				return fmt.Errorf("lx: provide one or more file paths via args or stdin")
 			}
 
 			r := opts.Effective()
 
-			if err := r.Run(opts.Files, os.Stdout); err != nil {
+			if err := r.Run(files, os.Stdout); err != nil {
 				return fmt.Errorf("lx: %w", err)
 			}
 			return nil

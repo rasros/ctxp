@@ -2,8 +2,6 @@ package lx
 
 // Options holds CLI-level configuration before effective values are derived.
 type Options struct {
-	Files []string
-
 	Head  int
 	Tail  int
 	NBoth int
