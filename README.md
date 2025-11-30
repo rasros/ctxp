@@ -64,24 +64,24 @@ lx cmd/lx/main.go | wl-copy
 
 ## More examples
 
-### Multiple files with glob
-We can easily filter multiple files in shells that allow recursive glob:
+### Filtering file names
+We can select multiple files in shells that allow recursive glob:
 ```bash
 lx **/*.py
 ```
 
-`lx` relies on standard tools for file selection. This example includes all python files except those with name ending in `_test.py`:
+If you need to exclude certain files we rely on standard tools for file selection.
 
-Either do it through `fd` or `find`:
+This example uses includes all python files except those with name ending in `_test.py`. Here `fd` or `find`:
 ```bash
-# fd using stdin-mode
-fd -e py -E "*_test.py" | lx
-
 # find using stdin-mode
 find . -name '*.py' ! -name '*_test.py' | lx
+
+# fd using stdin-mode
+fd -e py -E "*_test.py" | lx
 ```
 
-Or through glob:
+Or through shell glob syntax:
 ```bash
 # zsh glob
 lx **/*.py~*_test.py 
@@ -99,7 +99,7 @@ lx **/!(*_test).py
 ```
 
 ### Pattern search
-Searching for patterns is easily done through grep and pipe matching files to `lx`.
+Searching for patterns is easily done through `grep -l` and pipe matching files to `lx`.
 
 This example searches for files with a function starting with `save` under the src folder:
 ```bash
