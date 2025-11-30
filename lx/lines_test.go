@@ -171,3 +171,4 @@ func TestSliceLines_HeadTailCoverAll(t *testing.T) {
 		t.Errorf("sliceLines head+tail cover all changed data: got %q, want %q", got, input)
 	}
 }
+

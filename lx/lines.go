@@ -36,11 +36,6 @@ func prepareView(data []byte, head, tail int) ([]byte, int) {
 		return data, total
 	}
 
-	// If there are no logical lines (defensive), keep original.
-	if total == 0 {
-		return data, total
-	}
-
 	// If head or tail alone covers file, or together cover it, return full.
 	if head >= total || tail >= total || (head > 0 && tail > 0 && head+tail >= total) {
 		return data, total
@@ -74,9 +69,6 @@ func splitLines(data []byte) [][]byte {
 		return nil
 	}
 	lines := bytes.SplitAfter(data, []byte("\n"))
-	if len(lines) == 0 {
-		return lines
-	}
 	if len(lines[len(lines)-1]) == 0 {
 		lines = lines[:len(lines)-1]
 	}
@@ -175,3 +167,4 @@ func addLineNumbers(data []byte, totalRows, head, tail int) []byte {
 	// Fallback: sequential numbering (should not normally reach here).
 	return numberLines(lines, 1)
 }
+
