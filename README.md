@@ -66,23 +66,43 @@ Use cases:
 
 ## More examples
 
+### Multiple files with glob
+We can easily filter multiple files in shells that allow recursive glob:
 ```bash
 lx **/*.py
 ```
 
-Exclude tests (zsh):
-
+`lx` relies on standard tools for file selection. This example includes all python files except those with name ending in `_test.py`:
 ```bash
+
+# fd using stdin-mode
+fd -e py -E "*_test.py" | lx
+
+# find using stdin-mode
+find . -name '*.py' ! -name '*_test.py' | lx
+
+# zsh glob
+lx **/*.py~*_test.py 
+
+# bash glob
+shopt -s globstar extglob
 lx **/*.py~*_test.py
+
+# fish glob
+lx **/*.py ^**/*_test.py
+
+# msys2 glob
+shopt -s globstar extglob
+lx **/!(*_test).py
 ```
 
-Collect files with ripgrep, then format:
+### Pattern search
+Searching for patterns is easily done with `ripgrep`. This example search for a function beginning with "save" in the `database` folder.
 
+Collect files with ripgrep, then format:
 ```bash
 rg "def save" -l **/database/*.py | lx
 ```
-
-This produces a stable, shell-based definition of "what I want the model to see" easily re-run anytime.
 
 ### Slicing
 
