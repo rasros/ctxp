@@ -9,11 +9,8 @@ and optional head/tail slicing. It works well with clipboard tools like
 * Prints multiple files with markdown-style headers and fenced code blocks.
 * Automatically detects the language for fenced code blocks based on file 
 extension.
-* Optional head/tail slicing:
-
-  * `--head`, `-h` prints the first N lines
-  * `--tail`, `-t` prints the last N lines
-  * `-n` prints both the first and last N lines with an ellipsis line between them
+* Optional head/tail slicing.
+* Optional line number output.
 * Reads file paths from CLI args or from stdin (one per line).
 * Delimiters are customizable using placeholders such as `{filename}`, 
 `{row_count}`, `{language}`, etc.
