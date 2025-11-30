@@ -110,7 +110,17 @@ grep -rl "def save" src | lx
 rg -l "def save" src | lx
 ```
 
-### Slicing
+### Line numbers: `-l`
+
+TOON supports line numbers so we do too 🤷.
+
+This is actually very useful for letting the LLM reference where in a big log dump something is wrong. Or if you specifically include prompting about instructions about line number references.
+
+```bash
+lx -l server.log
+```
+
+### Slicing: `-t -h -n`
 
 While iterating on the command it's convenient to slice files so you can more easily see what's included:
 
@@ -126,12 +136,6 @@ lx -n60 server.log
 ```
 
 Short forms like `-h5`, `-t10`, `-n2` are supported.
-
-### Line numbers for precise references
-
-TOON supports line numbers so we do too 🤷.
-
-Useful for non-coding or if you include prompting about line number references.
 
 ### Custom delimiters and placeholders
 
