@@ -71,14 +71,18 @@ lx **/*.py
 ```
 
 `lx` relies on standard tools for file selection. This example includes all python files except those with name ending in `_test.py`:
-```bash
 
+Either do it through `fd` or `find`:
+```bash
 # fd using stdin-mode
 fd -e py -E "*_test.py" | lx
 
 # find using stdin-mode
 find . -name '*.py' ! -name '*_test.py' | lx
+```
 
+Or through glob:
+```bash
 # zsh glob
 lx **/*.py~*_test.py 
 
@@ -95,11 +99,15 @@ lx **/!(*_test).py
 ```
 
 ### Pattern search
-Searching for patterns is easily done with `ripgrep`. This example search for a function beginning with "save" in the `database` folder.
+Searching for patterns is easily done through grep and pipe matching files to `lx`.
 
-Collect files with ripgrep, then format:
+This example searches for files with a function starting with `save` under the src folder:
 ```bash
-rg "def save" -l **/database/*.py | lx
+# grep
+grep -rl "def save" src | lx
+
+# ripgrep
+rg -l "def save" src | lx
 ```
 
 ### Slicing
