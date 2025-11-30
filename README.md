@@ -6,9 +6,13 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/rasros/lx)](https://goreportcard.com/report/github.com/rasros/lx)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-Its purpose is to make prompt setup *repeatable*. Instead of manually selecting, trimming, and pasting code into an AI chat window, you define the context you want in a single shell command. Re-run that command and you get the exact same prompt every time. It's designed to work with popular tools like `rg -l` and `fd` and shell glob.
+`lx` makes prompt setup **repeatable**. Instead of manually letting an agent guess or manually linking by clicking each file you want in the context, you define the context you want in a single shell command. Then you can rerun it whenever you need a fresh session. It works smoothly with tools like `rg -l`, `fd`, and recursive shell globs.
 
-This creates a more stable workflow. You keep control of the context, not the chat UI. If a conversation drifts or misinterprets something, you restart with the same context immediately.  
+This gives you a stable, controllable workflow:
+
+- You decide exactly what context the model sees.
+- If a conversation drifts, you restart instantly with the same context.
+- Adjust the command, rerun it, and paste the updated output.
 
 ---
 
@@ -44,12 +48,6 @@ Copy directly to clipboard (Wayland):
 ```bash
 lx cmd/lx/main.go | wl-copy
 ```
-
-Use cases:
-
-* Create a "context recipe" you can re-run for any new chat session.
-* Quickly modify the recipe (more files, different slicing) and re-paste into a clean conversation.
-* Treat prompts as reproducible commands instead of fragile in-chat constructions.
 
 ---
 
