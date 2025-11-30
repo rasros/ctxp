@@ -28,6 +28,6 @@ jobs:
         run: |
           go build \
             -ldflags="-X 'github.com/rasros/ctxp/ctxp.Version=${VERSION}'" \
-            -o ctxp \
-            ./cmd/ctxp
+            -o lx \
+            ./cmd/lx
 
