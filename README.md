@@ -4,7 +4,7 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/rasros/lx)](https://goreportcard.com/report/github.com/rasros/lx)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-**`lx` formats one or more files into clean, Markdown-fenced blocks ready to paste into LLM chat windows.**
+**Converts files into simple Markdown-fenced blocks for easy use in LLM chats.**
 
 The goal is to make prompt setup **repeatable**. Instead of letting an agent guess context or manually selecting files in a UI, you define the exact context you want in one shell command and rerun it whenever you need a fresh session. It works smoothly with tools like `rg -l`, `fd`, and recursive shell globs.
 
