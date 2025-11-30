@@ -1,10 +1,10 @@
 # lx
 
+**`lx` is a small CLI for turning one or more files into clean, Markdown-fenced blocks that are easy to paste into LLM chat windows.**
+
 [![Go Reference](https://pkg.go.dev/badge/github.com/rasros/lx.svg)](https://pkg.go.dev/github.com/rasros/lx)
 [![Go Report Card](https://goreportcard.com/badge/github.com/rasros/lx)](https://goreportcard.com/report/github.com/rasros/lx)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-
-`lx` is a small CLI for turning one or more files into clean, Markdown-fenced blocks that are easy to paste into LLM chat windows.
 
 Its purpose is to make prompt setup *repeatable*. Instead of manually selecting, trimming, and pasting code into an AI chat window, you define the context you want in a single shell command. Re-run that command and you get the exact same prompt every time. It's designed to work with popular tools like `rg -l` and `fd` and shell glob.
 
@@ -53,9 +53,18 @@ Use cases:
 
 ---
 
-## More examples
+## Features
 
-### Multiple files and globs
+* Generates Markdown headers and fenced blocks for one or many files.
+* Automatically detects fenced-code language from file extension.
+* Supports lightweight, ergonomic slicing (`-h`, `-t`, `-n`).
+* Optional line numbers for precise AI instructions.
+* Reads filenames from CLI args or stdin (great with `rg`, `find`, etc.).
+* Customizable delimiters with placeholders.
+
+---
+
+## More examples
 
 ```bash
 lx **/*.py
@@ -75,11 +84,9 @@ rg "def save" -l **/database/*.py | lx
 
 This produces a stable, shell-based definition of "what I want the model to see" easily re-run anytime.
 
----
+### Slicing
 
-### Slicing only what matters
-
-Keep prompts lean and focused:
+While iterating on the command it's convenient to slice files so you can more easily see what's included:
 
 ```bash
 # First 40 lines
@@ -92,68 +99,34 @@ lx -t80 server.log
 lx -n60 server.log
 ```
 
-Short forms like `-h5`, `-t10`, `-n2` are automatically normalized.
-
-Slicing lives in your command, not in manual editing. Adjust and re-run to refine context.
-
----
+Short forms like `-h5`, `-t10`, `-n2` are supported.
 
 ### Line numbers for precise references
 
-```bash
-lx -l file.go
-```
+TOON supports line numbers so we do too 🤷.
 
-Or combined with slicing:
+Useful for non-coding or if you include prompting about line number references.
 
-```bash
-lx --line-numbers -n80 -t40 file.go
-```
-
-Line numbers make follow-up instructions concrete (“check line 37–45”) and consistent across restarts.
-
-Behavior summary:
-
-* Full file: numbered `1..N`.
-* Head only: numbers start at `1`.
-* Tail only: numbers reflect original line positions.
-* Head + tail: middle replaced by an unnumbered ellipsis.
-
----
-
-## Features
-
-* Generates Markdown headers and fenced blocks for one or many files.
-* Automatically detects fenced-code language from file extension.
-* Supports lightweight, ergonomic slicing (`-h`, `-t`, `-n`).
-* Optional line numbers for precise AI instructions.
-* Reads filenames from CLI args or stdin (great with `rg`, `find`, etc.).
-* Customizable delimiters with placeholders.
-* Designed for reproducibility: encode your prompt-context workflow in a command or alias instead of building it manually in an AI UI.
-
----
-
-## Custom delimiters and placeholders
+### Custom delimiters and placeholders
 
 Default delimiters:
 
-````text
+~~~text
 {filename} ({row_count} rows)
 ---
 ```{language}
 ...file contents...
-````
-
-````
+```
+~~~
 
 Override them:
 
-```bash
+~~~bash
 lx \
   --prefix-delimiter="### {filename}\n```{language}\n" \
   --postfix-delimiter="```\n\n" \
   file.go
-````
+~~~
 
 Placeholders:
 
