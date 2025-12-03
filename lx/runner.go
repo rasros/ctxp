@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"runtime"
 	"strconv"
 	"strings"
 	"time"
@@ -17,13 +18,21 @@ type Runner struct {
 	LineNumbers      bool
 }
 
+// platform-specific newline placeholder replacement
+var nl = func() string {
+	if runtime.GOOS == "windows" {
+		return "\r\n"
+	}
+	return "\n"
+}()
+
 // NewRunner constructs a Runner with default delimiters if none are provided.
 func NewRunner(head, tail int, prefix, postfix string, lineNumbers bool) Runner {
 	if prefix == "" {
-		prefix = "{filename} ({row_count} rows)\n---\n```{language}\n"
+		prefix = "{filename} ({row_count} rows){n}---{n}```{language}{n}"
 	}
 	if postfix == "" {
-		postfix = "```\n\n"
+		postfix = "```{n}{n}"
 	}
 	return Runner{
 		Head:             head,
@@ -41,7 +50,12 @@ func (r Runner) buildPrefix(path string, totalRows int, byteSize int64, lastMod,
 	prefix = strings.ReplaceAll(prefix, "{byte_size}", strconv.FormatInt(byteSize, 10))
 	prefix = strings.ReplaceAll(prefix, "{last_modified}", lastMod)
 	prefix = strings.ReplaceAll(prefix, "{language}", lang)
+	prefix = strings.ReplaceAll(prefix, "{n}", nl)
 	return prefix
+}
+
+func (r Runner) buildPostfix() string {
+	return strings.ReplaceAll(r.PostfixDelimiter, "{n}", nl)
 }
 
 func (r Runner) runFile(path string, out io.Writer) error {
@@ -55,7 +69,6 @@ func (r Runner) runFile(path string, out io.Writer) error {
 		return fmt.Errorf("read %q: %w", path, err)
 	}
 
-	// Compute the view and the total number of rows in one go.
 	view, totalRows := prepareView(data, r.Head, r.Tail)
 
 	byteSize := info.Size()
@@ -78,14 +91,13 @@ func (r Runner) runFile(path string, out io.Writer) error {
 	if _, err := out.Write(toWrite); err != nil {
 		return fmt.Errorf("write data: %w", err)
 	}
-	if _, err := out.Write([]byte(r.PostfixDelimiter)); err != nil {
+	if _, err := out.Write([]byte(r.buildPostfix())); err != nil {
 		return fmt.Errorf("write postfix: %w", err)
 	}
 
 	return nil
 }
 
-// Run prints file contents with optional slicing and delimiters.
 func (r Runner) Run(files []string, out io.Writer) error {
 	for _, path := range files {
 		if err := r.runFile(path, out); err != nil {
@@ -94,3 +106,4 @@ func (r Runner) Run(files []string, out io.Writer) error {
 	}
 	return nil
 }
+

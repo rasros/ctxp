@@ -162,7 +162,7 @@ Short forms like `-h5`, `-t10`, `-n2` are supported.
 
 ### Custom delimiters and placeholders
 
-Default delimiters:
+Default delimiters (excluding new-lines):
 
 ~~~text
 {filename} ({row_count} rows)
@@ -176,18 +176,17 @@ Override them:
 
 ~~~bash
 lx \
-  --prefix-delimiter="### {filename}\n```{language}\n" \
-  --postfix-delimiter="```\n\n" \
+  --prefix-delimiter="### {filename}{n}```{language}{n}" \
+  --postfix-delimiter="```{n}{n}" \
   file.go
 ~~~
 
 Placeholders:
 
-* `{filename}`
+* `{n}` -- OS specific newline character(s)
+* `{filename}` -- relative path of the file from current directory
 * `{row_count}`
 * `{byte_size}`
 * `{last_modified}`
-* `{language}`
-
-Use these to enforce consistent prompt structure and regenerate identical context anytime.
+* `{language}` -- derived from file ending used for markdown syntax highlighting
 
