@@ -183,10 +183,10 @@ lx \
 
 Placeholders:
 
-* `{n}` -- OS specific newline character(s)
-* `{filename}` -- relative path of the file from current directory
+* `{n}` – OS specific newline character(s)
+* `{filename}` – relative path of the file from current directory
 * `{row_count}`
 * `{byte_size}`
 * `{last_modified}`
-* `{language}` -- derived from file ending used for markdown syntax highlighting
+* `{language}` – derived from file ending used for markdown syntax highlighting
 
