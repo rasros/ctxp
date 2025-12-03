@@ -4,12 +4,27 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"runtime/debug"
 
 	ucli "github.com/urfave/cli/v3"
 )
 
-// Version is the application version. It can be overridden at build time via ldflags.
-var Version = "dev"
+var Version = "(devel)"
+
+func init() {
+	// If ldflags already set Version (e.g. release builds), leave it unchanged.
+	if Version != "(devel)" {
+		return
+	}
+
+	// For go install
+	if info, ok := debug.ReadBuildInfo(); ok {
+		v := info.Main.Version
+		if v != "" && v != "(devel)" {
+			Version = v
+		}
+	}
+}
 
 // NewCommand builds the urfave/cli command for lx.
 func NewCommand() *ucli.Command {
@@ -50,13 +65,14 @@ func NewCommand() *ucli.Command {
 			},
 
 			&ucli.StringFlag{
-				Name:        "prefix-delimiter",
-				Usage:       "string printed before file contents; placeholders: {filename}, {row_count}, {byte_size}, {last_modified}",
+				Name: "prefix-delimiter",
+				Usage: "string printed before file contents; placeholders: {filename}, {row_count}, " +
+					"{byte_size}, {last_modified}, {language}, {n}",
 				Destination: &opts.PrefixDelimiter,
 			},
 			&ucli.StringFlag{
 				Name:        "postfix-delimiter",
-				Usage:       "string printed after file contents",
+				Usage:       "string printed after file contents, see prefix-delimter for placeholders",
 				Destination: &opts.PostfixDelimiter,
 			},
 

@@ -106,4 +106,3 @@ func (r Runner) Run(files []string, out io.Writer) error {
 	}
 	return nil
 }
-
